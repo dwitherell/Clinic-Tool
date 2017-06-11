@@ -1,0 +1,180 @@
+:root {
+  --dark-primary-color: #455A64;
+  --default-primary-color: #607D8B;
+  --light-primary-color: #CFD8DC;
+  --text-primary-color: #FFFFFF;
+  --accent-color: #03A9F4;
+  --dark-accent-color: #0277bd;
+  --primary-text-color: #212121;
+  --secondary-text-color: #757575;
+  --divider-color: #BDBDBD;
+  --default-box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+  --gutter: 16px;
+}
+
+
+.main-header {
+    position: fixed; 
+    width: 100%;
+}
+
+.content {
+    margin-top: 50px;
+}
+
+a#morpace_logo {
+    background-color: #BDBDBD;
+    padding: 10px 15px;
+}
+
+.nav > li > a#morpace_logo:hover {
+    background-color: #BDBDBD;
+}
+
+.sidebar {
+    background-color: #CFD8DC;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+    height: 200vh; 
+    width: 250px; 
+    overflow-y: auto; 
+    position: fixed;
+    /*font-family: 'Lobster', cursive;*/
+
+}
+
+/* menuitem colors */
+section.sidebar > .sidebar-menu > li:hover > a,
+aside.main-sidebar section.sidebar > .sidebar-menu > .active > a {
+    color: #03A9F4;
+    border-left-color: #03A9F4;
+    background-color: #CFD8DC;
+}
+
+section.sidebar > .sidebar-menu > li > a { 
+    color: black;
+}
+
+/* box border */
+div[id*=shiny-tab] div.box,
+div[id*=shiny-tab] div.box div.box-header,
+div[id*=shiny-tab] div.nav-tabs-custom,
+div[id*=shiny-tab] div.nav-tabs-custom div.nav.tabs {
+    border: 0;
+    border-radius: 2px; 
+}
+
+/* box shadow */
+div[id*=shiny-tab] div.box, 
+div[id*=shiny-tab] div.nav-tabs-custom {
+    box-shadow: 0px 2px 5px rgba(0,0,0,.26);
+}
+
+/* box header color */
+div[id*=shiny-tab] div.box div.box-header {
+    background-color: #607D8B;  
+    color: #FFFFFF;
+
+}
+
+/* active tab box tab */
+.nav-tabs-custom .nav-tabs li.active {
+    border-top-color: #03A9F4;
+}
+
+/* theme of all tabs (except selected) */
+.nav-tabs-custom > .nav-tabs {
+    background-color: #CFD8DC;
+
+}
+
+/* theme of hovered tab */
+.nav-tabs-custom > .nav-tabs > li:hover > a {
+    color: #03A9F4;
+    border-top-color: #03A9F4;
+}
+
+
+/* header 'logo' section */
+div.wrapper > header.main-header > span.logo,
+div.wrapper > header.main-header > span.logo:hover{
+    background-color: #455A64;
+    box-shadow: 0px 2px 5px rgba(0,0,0,.26);
+}
+
+/* header 'navbar' section */
+div.wrapper > header.main-header > nav.navbar {
+    background-color: #455A64;
+    box-shadow: 0px 2px 5px rgba(0,0,0,.26);
+}
+
+/* action buttons */
+#lvr_submit,
+#pm_submit {
+    background-color: #03A9F4;
+    margin-bottom: 20px;
+    color: white;
+}
+
+/* dataTables */
+.dataTables_wrapper {
+    overflow-x: auto;
+}
+
+/* slider input bar */
+.irs-bar,
+.irs-bar-edge {
+    background: #455A64; 
+    border-top: 1px solid #455A64; 
+    border-bottom: 1px solid #455A64;
+}
+
+.irs-bar-edge {
+    border-left: solid #455A64;
+}
+
+.irs-single {
+    color: white;
+    background: #455A64;
+}
+
+.irs-slider,
+.irs-slider:hover {
+    background: #CFD8DC;
+    border: 1px solid #AAA;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+
+/* OLD STUFF CUT FROM UI.R
+
+.skin-blue .main-sidebar .sidebar .sidebar-menu a:hover {
+    color: #6CAEE0;
+    border-left-color: #6CAEE0;
+    background-color: #222D32;
+}
+
+.skin-blue .main-sidebar .sidebar .sidebar-menu .active  a {
+    color: #FFFFFF;
+    border-left-color: #004B8E;
+    background-color: #6CAEE0;
+    
+.skin-blue .main-header .logo:hover {
+    background-color: #222D32;
+}
+.sidebar {
+    height: 200vh; 
+    width: 250px; 
+    overflow-y: auto; 
+    position: fixed;
+}
+
+.skin-blue .main-header .navbar {
+    background-color: #222D32;
+}   
+
+.skin-blue .main-header .logo {
+    background-color: #222D32;
+
+}
+
+}*/

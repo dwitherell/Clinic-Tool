@@ -1,0 +1,12 @@
+To do list:
+02) adjust dataTable columns to account for new variables
+   also... fix centering, it looks weird
+03) create UI objects from filters based on length(unique(filter))
+04) make sure filtering still works
+05) make sure calculations still work
+06) add in sample size calculations
+07) add in variance explained
+08) rough out correlation tab
+09) instructions and about correspondence analysis tab
+10) loading pages when data is not input
+11) generally, improve/cleanup/add comments to code

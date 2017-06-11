@@ -1,0 +1,96 @@
+Attribute_Code,Attribute
+F3B,Purchase Consid
+B1,Initial Impression (B1)
+B30,Full Front
+B9,Front Corner
+B10,Side
+B11,Rear Corner 
+B12,Full Rear
+B13_a,Rear Bumper (Rear)
+B13_b,Exhaust/Tailpipes
+B13_c,Lift Gate
+B13_d,Rear Window
+B13_e,Taillights 
+B15,Rear Harmony
+B18_a,Roofline Shape
+B18_b,Side Window Shape
+B18_c,Body Below Side Windows 
+B18_d,Wheels and Tires
+B18_e,Door Handles
+B18_f,Front Bumper (Side)
+B18_g,Rear Bumper (Side)
+B18_h,Hood (Side)
+B18_i,Pillars
+B29,Perception of Roominess
+B29A,Side Harmony
+B31_a,Hood (Front)
+B31_b,Headlights
+B31_c,Foglights
+B31_d,Front Bumper (Front)
+B31_e,Grille
+B31_f,Side Mirrors
+B35,Front Harmony
+B39,Exterior Harmony
+B43,Proportion Harmony
+C1,Ingress (Front)
+C21,Egress (Front)
+C2,Initial Impression (C2)
+C3,Door Panel
+C4,Dashboard
+C5,Center Screen
+C6,Steering Wheel
+C7,Instrument Cluster
+C8,Climate & Radio
+C9,Center Console/Gearshift
+C10,Front Seat 
+C12,Harmony of Color/Materials 
+C14,Center Console Suitability
+C15,Driver Visibility
+C16,Front Roominess
+C17,Driver Comfort 
+C18,Driver Appearance
+C19,Driver Harmony
+C22,Ingress (2nd Row)
+C27,Egress (2nd Row)
+C23,2nd Row Visibility
+C24,2nd Row Roominess
+C25,2nd Row Comfort 
+C26,2nd Row Appearance
+C28,Interior Appearance
+C29,Interior Suitability (1st/2nd Row)
+D1,Loading/Unloading Cargo
+D3,Cargo Suitability
+E1,Fit of Ext. & Int. Design
+E4,Purchase Consid (After Eval)
+C20NEW_a,Complex
+C20NEW_b,Exciting (C20)
+C20NEW_c,Flexible
+C20NEW_d,Harmonious
+C20NEW_e,Imaginative
+C20NEW_f,Intriguing
+C20NEW_g,Intuitive
+C20NEW_h,Open
+C20NEW_i,Precise
+C20NEW_j,Pure
+C20NEW_k,Relaxing
+C30,Interior Quality 
+B40,Exterior Appearance 
+B45,Exterior Suitability 
+D4,Total Vehicle Suitability 
+B46_a,Aggressive
+B46_b,Capable
+B46_c,Competent
+B46_d,Energetic
+B46_e,Exciting (B46)
+B46_f,Feminine
+B46_g,Fits My Needs
+B46_h,Fun
+B46_i,Genuine
+B46_j,Innovative
+B46_k,Masculine
+B46_l,Nimble
+B46_m,Plain
+B46_n,Premium
+B46_o,Sleek
+B46_p,Sporty
+B46_q,Strong
