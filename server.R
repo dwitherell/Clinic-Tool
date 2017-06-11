@@ -48,14 +48,21 @@ function(input, output, session) {
             
         }
         
-        out <- lever_percep_corr() %>%
+        means <- lever_percep_corr() %>%
             group_by(Banner, Attribute) %>%
             summarise(Mean = mean(Weight * Rating)) %>%
             mutate_if(is.numeric, funs(round(., 3))) %>%
-            spread(key = Banner, value = Mean) %>%
-            left_join(lever_percep_corr(), by = "Attribute") %>%
-            select(Attribute, Attribute_Code, 2:6) %>%
-            setNames(gsub("_", " ", names(.)))
+            spread(Banner, Mean)
+        
+        atts <- lever_percep_corr() %>% 
+            select(starts_with("Att")) %>% 
+            group_by(Attribute, Attribute_Code) %>%
+            filter(row_number() == 1)
+        
+        out <- left_join(means, atts, by = "Attribute") %>%
+            select(Attribute, Attribute_Code, everything()) %>%
+            set_names(gsub("_", " ", names(.)))
+
         
         datatable(out,
                   rownames = FALSE,
