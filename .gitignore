@@ -1,1 +1,3 @@
 *.sav
+.Rproj.user
+data
