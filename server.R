@@ -244,6 +244,20 @@ function(input, output, session) {
         
     })
     
+    ### display sample sizes
+    lvr_sample_size <- eventReactive(input$lvr_submit == 0, {
+        if (is.null(input$lever_percep_corr_file)) return(NULL)
+        num <- as.numeric(leverdata()[1, 6])  # 6th col is Target Sample Size
+        out <- paste("Sample size: ", num)
+        out
+
+    }, ignoreInit = TRUE)
+    
+    output$lvr_sample_size_UI <- renderUI({
+        out <- lvr_sample_size()
+        print(out)
+    })
+    
     ### calculate lever data
     leverdata <- eventReactive(input$lvr_submit == 0, {
         
@@ -268,18 +282,17 @@ function(input, output, session) {
 
         out <- out %>% select(1:7)
         
-        num_banner <- length(unique(out$Banner))
-        num_attributes <- length(unique(out$Attribute))
+        ## sample size calculation
+        comps <- length(unique(out$Banner)) - 1
         
-        samp_size <- out %>%
-            mutate(Group = ifelse(Banner == input$lvr_banner,
-                                  "Tgt_SS", "Comp_SS")) %>%
-            group_by(Group) %>%
-            summarise(n = n() / num_banner / num_attributes)
+        Tgt_SS <- out %>%
+            group_by(Serial) %>%
+            filter(row_number() == 1) %>%
+            nrow(.)
         
-        Comp_SS <- samp_size[[2]][1]
-        Tgt_SS  <- samp_size[[2]][2]
+        Comp_SS <- Tgt_SS * comps
         
+        ## means calculation
         means <- out %>%
             mutate(Group = ifelse(Banner == input$lvr_banner,
                                   "Tgt_Mean", "Comp_Mean")) %>%
@@ -288,6 +301,7 @@ function(input, output, session) {
             spread(Group, avg) %>%
             mutate(Gap = Tgt_Mean - Comp_Mean)
         
+        ## stdev calculation
         stdev <- out %>%
             mutate(Group = ifelse(Banner == input$lvr_banner, 
                                   "Tgt_Std", "Comp_Std")) %>%
@@ -295,6 +309,7 @@ function(input, output, session) {
             summarise(std = sqrt(wtd.var(x = Rating, weights = Weight))) %>%
             spread(Group, std)
         
+        ## correlation calculation
         corr <- out %>%
             select(-Attribute_Code) %>%
             spread(Attribute, Rating) %>%
@@ -306,6 +321,7 @@ function(input, output, session) {
             filter(Corr_var == input$lvr_corr) %>%
             select(Attribute, Correlation)
         
+        ## combine all
         final <- means %>%
             mutate(Comp_SS = Comp_SS,
                    Tgt_SS  = Tgt_SS) %>%
@@ -802,16 +818,6 @@ function(input, output, session) {
         actionButton('pm_uncheck', "Uncheck attributes", icon = icon('check-square'))
     })
     
-    ### display number of attributes selected
-    output$pm_atts_selected <- renderText({
-        if (is.null(input$lever_percep_corr_file)) return(NULL)
-        num <- as.numeric(length(input$pm_attributes))
-        out <- paste("# Attributes selected: ", num)
-        out
-        
-    })
-
-    
     ### attribute choices for map
     output$pm_attributes_UI <- renderUI({
         
@@ -834,6 +840,30 @@ function(input, output, session) {
         
         controls
         
+    })
+    
+    ### display number of attributes selected
+    output$pm_atts_selected <- renderText({
+        if (is.null(input$lever_percep_corr_file)) return(NULL)
+        num <- as.numeric(length(input$pm_attributes))
+        out <- paste("# Attributes selected: ", num)
+        out
+        
+    })
+    
+    
+    ### display sample sizes
+    pm_sample_size <- eventReactive(input$pm_submit == 0, {
+        if (is.null(input$lever_percep_corr_file)) return(NULL)
+        num <- as.numeric(perceptualdata()[1, 5])  # 5th col is Target Sample Size
+        out <- paste("Sample size: ", num)
+        out
+        
+    }, ignoreInit = TRUE)
+    
+    output$pm_sample_size_UI <- renderUI({
+        out <- pm_sample_size()
+        print(out)
     })
     
     ### calculate correspondence analysis
@@ -861,6 +891,12 @@ function(input, output, session) {
             
         } else { out <- out %>% filter(data[10] == input$pm_filter3) }
         
+        ## sample size calculation
+        SS <- out %>%
+            group_by(Serial) %>%
+            filter(row_number() == 1) %>%
+            nrow(.)
+        
         ca.input <- out %>%
             filter(Attribute %in% input$pm_attributes) %>%
             select(Weight, Banner, Attribute, Rating) %>%
@@ -887,7 +923,8 @@ function(input, output, session) {
                     as_tibble() %>%
                     select(1:3) %>%
                     setNames(c("Variable", "Dim1", "Dim2")) %>%
-                    mutate(Type = "Banner"))
+                    mutate(Type = "Banner")) %>%
+            mutate(`Sample Size` = SS)
         
         coords 
         
@@ -898,7 +935,9 @@ function(input, output, session) {
         
         if (is.null(perceptualdata())) {return(NULL)}
         
-        final <- perceptualdata()
+        final <- perceptualdata() %>%
+            # drop sample size variable
+            select(-5)
         
         # # options of the datatable output
         # datatable(final, rownames = FALSE)
@@ -910,7 +949,7 @@ function(input, output, session) {
                       columnDefs = list(
                           list(width = '25%',
                                targets = c(0, 1, 2, 3)),
-                          list(className = "dt-center", 
+                          list(className = "dt-center",
                                targets = c(1, 2))))) %>%
             formatRound(c(2:3), digits = 3)
 

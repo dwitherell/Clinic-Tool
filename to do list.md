@@ -1,6 +1,5 @@
 #To do list:  
 
-- add in sample size output
 - add in variance explained
 - rough out correlation tab
 - instructions and about correspondence analysis tab

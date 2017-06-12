@@ -122,7 +122,8 @@ body <- dashboardBody(
                                uiOutput("lvr_corr_UI"),
                                uiOutput("lvr_uncheck_UI"),
                                br(),
-                               textOutput("lvr_atts_selected")),
+                               textOutput("lvr_atts_selected"),
+                               uiOutput("lvr_sample_size_UI")),
                         column(tweaks, width = 10,
                                uiOutput("lvr_attributes_UI")))
                 ), # end row 1
@@ -271,7 +272,8 @@ body <- dashboardBody(
                                uiOutput("pm_filter3_UI"),
                                uiOutput("pm_uncheck_UI"),
                                br(),
-                               textOutput("pm_atts_selected")),
+                               textOutput("pm_atts_selected"),
+                               uiOutput("pm_sample_size_UI")),
                         column(tweaks, width = 10,
                                uiOutput("pm_attributes_UI")))
                 ), # end row 1
