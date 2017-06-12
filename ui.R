@@ -116,7 +116,9 @@ body <- dashboardBody(
                         solidHeader = TRUE,
                         column(width = 2,
                                uiOutput("lvr_select_banner_UI"),
-                               uiOutput("lvr_filter_UI"),
+                               uiOutput("lvr_filter1_UI"),
+                               uiOutput("lvr_filter2_UI"),
+                               uiOutput("lvr_filter3_UI"),
                                uiOutput("lvr_corr_UI"),
                                uiOutput("lvr_uncheck_UI"),
                                br(),
@@ -264,7 +266,9 @@ body <- dashboardBody(
                         collapsible = TRUE,
                         solidHeader = TRUE,
                         column(width = 2,
-                               uiOutput("pm_filter_UI"),
+                               uiOutput("pm_filter1_UI"),
+                               uiOutput("pm_filter2_UI"),
+                               uiOutput("pm_filter3_UI"),
                                uiOutput("pm_uncheck_UI"),
                                br(),
                                textOutput("pm_atts_selected")),
@@ -294,8 +298,8 @@ body <- dashboardBody(
 
                            # SUBTAB: Build
                            tabPanel("Build",
-                                    column(width = 12, textInput("pm_plot_title", "Plot title:")),
-                                    column(width = 12, selectInput("pm_label_position", "Label position:",
+                                    column(width = 12, textInput("pm_plot_title", "Plot title")),
+                                    column(width = 12, selectInput("pm_label_position", "Label position",
                                                                    multiple = FALSE,
                                                                    choices = c("Best fit", 
                                                                                "Corners",
@@ -305,54 +309,54 @@ body <- dashboardBody(
                                                                                "Right"), 
                                                                    selected = "Best fit")),
                                     column(width = 6, 
-                                           numericInput("pm_point_padding", "Point padding:",
+                                           numericInput("pm_point_padding", "Point padding",
                                                         value = 0.25, min = 0, max = 2, step = 0.05)),
                                     column(width = 6, 
-                                           numericInput("pm_box_padding", "Box padding:",
+                                           numericInput("pm_box_padding", "Box padding",
                                                         value = 0.25, min = 0, max = 2, step = 0.05))
                                     
                            ), # end build tab
                            
                            # SUBTAB: Style
                            tabPanel("Style",
-                                    column(width = 6, numericInput("pm_label_size", "Font size:",
+                                    column(width = 6, numericInput("pm_label_size", "Font size",
                                                                    value = 4.5, min = 1, max = 10, step = 0.1)),
-                                    column(width = 6, selectInput("pm_font_face", "Font style:",
+                                    column(width = 6, selectInput("pm_font_face", "Font style",
                                                                   selected = "bold", 
                                                                   choices = fontList)),
-                                    column(width = 6, numericInput("pm_point_size", "Point size:",
+                                    column(width = 6, numericInput("pm_point_size", "Point size",
                                                                    value = 3, min = 1, max = 10, step = 0.1)),
-                                    column(width = 6, selectInput("pm_point_select", "Point style:",
+                                    column(width = 6, selectInput("pm_point_select", "Point style",
                                                                   selected = "circle", 
                                                                   choices = as.character(pointList$shape))),
-                                    column(width = 6, numericInput("pm_line_size", "Int. line width:",
+                                    column(width = 6, numericInput("pm_line_size", "Int. line width",
                                                                    value = 0.5, min = 0, max = 5, step = 0.1)),
-                                    column(width = 6, selectInput("pm_line_type", "Intercept line style:",
+                                    column(width = 6, selectInput("pm_line_type", "Intercept line style",
                                                                   choices = lineList,
                                                                   selected = "longdash")),
-                                    column(width = 12, sliderInput("pm_line_alpha", "Intercept line transparency:", 
+                                    column(width = 12, sliderInput("pm_line_alpha", "Intercept line transparency", 
                                                                    value = 0.30, min = 0, max = 1, step = 0.05))   
                            ), # end style tab
                            
                            # SUBTAB: Colors
                            tabPanel("Colors",
-                                    colourInput("pm_attribute_color", "Attribute color:",
+                                    colourInput("pm_attribute_color", "Attribute color",
                                                 value = "black", allowTransparent = TRUE),
-                                    colourInput("pm_banner_color", "Banner color:",
+                                    colourInput("pm_banner_color", "Banner color",
                                                 value = "#D10000", allowTransparent = TRUE),
-                                    colourInput("pm_line_color", "Intercept line color:", 
+                                    colourInput("pm_line_color", "Intercept line color", 
                                                 value = "black", allowTransparent = TRUE),
-                                    colourInput("pm_segment_color", "Leader line color:",
+                                    colourInput("pm_segment_color", "Leader line color",
                                                 value = "#B5B5B5", allowTransparent = TRUE), 
-                                    colourInput("pm_background_color", "Background color:", 
+                                    colourInput("pm_background_color", "Background color", 
                                                 value = "transparent", allowTransparent = TRUE)
                                     
                            ), # end colors tab
                            
                            # SUBTAB: Download
                            tabPanel("Download",
-                                    textInput("pm_map_title", "Perceptual map file name:"),
-                                    textInput("pm_table_title", "Perceptual data file name:"),
+                                    textInput("pm_map_title", "Perceptual map file name"),
+                                    textInput("pm_table_title", "Perceptual data file name"),
                                     column(width = 6, downloadButton("pm_download_map", "Download plot")),
                                     column(width = 6, downloadButton("pm_download_data", "Download data")),
                                     tags$hr()

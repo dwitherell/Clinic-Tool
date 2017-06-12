@@ -87,23 +87,109 @@ function(input, output, session) {
         banner_choices <- lever_percep_corr() %$% unique(Banner)
         
         selectInput(inputId = 'lvr_banner',
-                    label = 'Target banner:',
+                    label = 'Target banner',
                     choices = banner_choices,
                     selected = banner_choices[[1]])
     })
     
-    ### choose filter
-    output$lvr_filter_UI <- renderUI({
+    ### FILTER #1
+    output$lvr_filter1_UI <- renderUI({
         
         if (is.null(input$lever_percep_corr_file)) return(NULL)
         
-        filter_choices <- lever_percep_corr() %$% levels(Target)
+        data <- lever_percep_corr()
         
-        selectInput(inputId = 'lvr_filter',
-                    label = 'Filter:',
-                    choices = c("Total", filter_choices),
-                    selected = "Total")
-    })
+        if (nrow(unique(data[8])) <= 1) {
+            
+            filter_name <- names(data[8])
+            
+            # if there is only one option...
+            selectInput(inputId = 'lvr_filter1',
+                        label = filter_name,
+                        choices = "Total",
+                        selected = "Total")    
+            
+        } else {
+            
+            # if the filter use useful...
+            filter_name <- paste(names(data[8]), "(Filter 1)", sep = " ")
+            
+            filter_choices <- unique(data[8])
+            
+            selectInput(inputId = 'lvr_filter1',
+                        label = filter_name,
+                        choices = c("Total", filter_choices),
+                        selected = "Total")
+            
+        }
+        
+    }) 
+    
+    ### FILTER #2
+    output$lvr_filter2_UI <- renderUI({
+        
+        if (is.null(input$lever_percep_corr_file)) return(NULL)
+        
+        data <- lever_percep_corr()
+        
+        if (nrow(unique(data[9])) <= 1) {
+            
+            filter_name <- names(data[9])
+            
+            # if there is only one option...
+            selectInput(inputId = 'lvr_filter2',
+                        label = filter_name,
+                        choices = "Total",
+                        selected = "Total")    
+        
+        } else {
+            
+            # if the filter use useful...
+            filter_name <- paste(names(data[9]), "(Filter 2)", sep = " ")
+            
+            filter_choices <- unique(data[9])
+            
+            selectInput(inputId = 'lvr_filter2',
+                        label = filter_name,
+                        choices = c("Total", filter_choices),
+                        selected = "Total")
+            
+        }
+        
+    }) 
+    
+    ### FILTER #3
+    output$lvr_filter3_UI <- renderUI({
+        
+        if (is.null(input$lever_percep_corr_file)) return(NULL)
+        
+        data <- lever_percep_corr()
+
+        if (nrow(unique(data[10])) <= 1) {
+            
+            filter_name <- names(data[10])
+            
+            # if there is only one option...
+            selectInput(inputId = 'lvr_filter3',
+                        label = filter_name,
+                        choices = "Total",
+                        selected = "Total")    
+            
+        } else {
+            
+            # if the filter use useful...
+            filter_name <- paste(names(data[10]), "(Filter 3)", sep = " ")
+            
+            filter_choices <- unique(data[10])
+            
+            selectInput(inputId = 'lvr_filter3',
+                        label = filter_name,
+                        choices = c("Total", filter_choices),
+                        selected = "Total")
+            
+        }
+        
+    }) 
     
     ### choose correlation variable
     output$lvr_corr_UI <- renderUI({
@@ -113,7 +199,7 @@ function(input, output, session) {
         corr_choices <- lever_percep_corr() %$% unique(Attribute)
         
         selectInput(inputId = 'lvr_corr',
-                    label = 'Attribute to correlate:',
+                    label = 'Attribute to correlate',
                     choices = corr_choices)
     })
     
@@ -135,7 +221,7 @@ function(input, output, session) {
         controls <- tags$div(align = 'left', 
                              class = 'multicol', 
                              checkboxGroupInput(inputId  = 'lvr_attributes', 
-                                                label    = "Attributes to include in map:", 
+                                                label    = "Attributes to include in map", 
                                                 choices  = att_choices,
                                                 inline   = FALSE))
         observeEvent(input$lvr_uncheck, {
@@ -163,16 +249,24 @@ function(input, output, session) {
         
         if (is.null(input$lever_percep_corr_file)) return(NULL)
         
-        if (input$lvr_filter == "Total") {
+        data <- lever_percep_corr()
+        
+        # filter 1
+        if (input$lvr_filter1 == "Total") {
             
-            out <- lever_percep_corr() %>% select(-Target)
+            out <- data
             
-        } else {
+        } else { out <- data %>% filter(data[8] == input$lvr_filter1) }
+        
+        # filter 2
+        if (input$lvr_filter2 == "Total" | is.null(input$lvr_filter2)) {
             
-            out <- lever_percep_corr() %>%
-                filter(Target == input$lvr_filter) %>%
-                select(-Target)
-        }
+            out <- out
+            
+        } else { out <- out %>% filter(out[9] == input$lvr_filter2) }
+        
+
+        out <- out %>% select(1:7)
         
         num_banner <- length(unique(out$Banner))
         num_attributes <- length(unique(out$Attribute))
@@ -187,7 +281,6 @@ function(input, output, session) {
         Tgt_SS  <- samp_size[[2]][2]
         
         means <- out %>%
-            #filter(Attribute %in% input$lvr_attributes) %>%
             mutate(Group = ifelse(Banner == input$lvr_banner,
                                   "Tgt_Mean", "Comp_Mean")) %>%
             group_by(Group, Attribute) %>%
@@ -196,7 +289,6 @@ function(input, output, session) {
             mutate(Gap = Tgt_Mean - Comp_Mean)
         
         stdev <- out %>%
-            #filter(Attribute %in% input$lvr_attributes) %>%
             mutate(Group = ifelse(Banner == input$lvr_banner, 
                                   "Tgt_Std", "Comp_Std")) %>%
             group_by(Group, Attribute) %>%
@@ -602,17 +694,105 @@ function(input, output, session) {
     #### TAB 4: PERCEPTUAL MAP --------------------------------------
     
     ### choose filter
-    output$pm_filter_UI <- renderUI({
+    
+    ### FILTER #1
+    output$pm_filter1_UI <- renderUI({
         
         if (is.null(input$lever_percep_corr_file)) return(NULL)
         
-        filter_choices <- lever_percep_corr() %$% levels(Target)
+        data <- lever_percep_corr()
         
-        selectInput(inputId = 'pm_filter',
-                    label = 'Filter:',
-                    choices = c("Total", filter_choices),
-                    selected = "Total")
-    })
+        if (nrow(unique(data[8])) <= 1) {
+            
+            filter_name <- names(data[8])
+            
+            # if there is only one option...
+            selectInput(inputId = 'pm_filter1',
+                        label = filter_name,
+                        choices = "Total",
+                        selected = "Total")    
+            
+        } else {
+            
+            # if the filter use useful...
+            filter_name <- paste(names(data[8]), "(Filter 1)", sep = " ")
+            
+            filter_choices <- unique(data[8])
+            
+            selectInput(inputId = 'pm_filter1',
+                        label = filter_name,
+                        choices = c("Total", filter_choices),
+                        selected = "Total")
+            
+        }
+        
+    }) 
+    
+    ### FILTER #2
+    output$pm_filter2_UI <- renderUI({
+        
+        if (is.null(input$lever_percep_corr_file)) return(NULL)
+        
+        data <- lever_percep_corr()
+        
+        if (nrow(unique(data[9])) <= 1) {
+            
+            filter_name <- names(data[9])
+            
+            # if there is only one option...
+            selectInput(inputId = 'pm_filter2',
+                        label = filter_name,
+                        choices = "Total",
+                        selected = "Total")    
+            
+        } else {
+            
+            # if the filter use useful...
+            filter_name <- paste(names(data[9]), "(Filter 2)", sep = " ")
+            
+            filter_choices <- unique(data[9])
+            
+            selectInput(inputId = 'pm_filter2',
+                        label = filter_name,
+                        choices = c("Total", filter_choices),
+                        selected = "Total")
+            
+        }
+        
+    }) 
+    
+    ### FILTER #3
+    output$pm_filter3_UI <- renderUI({
+        
+        if (is.null(input$lever_percep_corr_file)) return(NULL)
+        
+        data <- lever_percep_corr()
+        
+        if (nrow(unique(data[10])) <= 1) {
+            
+            filter_name <- names(data[10])
+            
+            # if there is only one option...
+            selectInput(inputId = 'pm_filter3',
+                        label = filter_name,
+                        choices = "Total",
+                        selected = "Total")    
+            
+        } else {
+            
+            # if the filter use useful...
+            filter_name <- paste(names(data[10]), "(Filter 3)", sep = " ")
+            
+            filter_choices <- unique(data[10])
+            
+            selectInput(inputId = 'pm_filter3',
+                        label = filter_name,
+                        choices = c("Total", filter_choices),
+                        selected = "Total")
+            
+        }
+        
+    }) 
     
     ### uncheck attribute button
     output$pm_uncheck_UI <- renderUI({
@@ -661,15 +841,25 @@ function(input, output, session) {
         
         if (is.null(input$lever_percep_corr_file)) return(NULL)
         
-        if (input$pm_filter == "Total") {
+        data <- lever_percep_corr()
+        
+        if (input$pm_filter1 == "Total") {
             
-            out <- lever_percep_corr()
+            out <- data
             
-        } else {
+        } else { out <- data %>% filter(data[8] == input$pm_filter1) }
+        
+        if (input$pm_filter2 == "Total") {
             
-            out <- lever_percep_corr() %>%
-                filter(Target == input$pm_filter)
-        }
+            out <- out
+            
+        } else { out <- out %>% filter(data[9] == input$pm_filter2) }
+        
+        if (input$pm_filter3 == "Total") {
+            
+            out <- out
+            
+        } else { out <- out %>% filter(data[10] == input$pm_filter3) }
         
         ca.input <- out %>%
             filter(Attribute %in% input$pm_attributes) %>%
