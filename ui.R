@@ -154,17 +154,17 @@ body <- dashboardBody(
                                     column(width = 4, checkboxInput("lvr_axis_Text", "Axis text", value = FALSE)),
                                     column(width = 4, checkboxInput("lvr_axis_Ticks", "Axis ticks", value = FALSE)),
                                     column(width = 4, checkboxInput("lvr_axis_Labels", "Axis labels", value = TRUE)),
-                                    column(width = 12, selectInput("lvr_label_position", "Label position",
-                                                                   multiple = FALSE,
-                                                                   choices = c("Best fit", 
-                                                                               "Corners",
-                                                                               "Top",
-                                                                               "Bottom",
-                                                                               "Left",
-                                                                               "Right"), 
-                                                                   selected = "Best fit")),
                                     column(width = 6, 
-                                          numericInput("lvr_xmin", "X Min", 
+                                           selectInput("lvr_label_position", "Label position",
+                                                       multiple = FALSE,
+                                                       choices = c("Best fit", 
+                                                                   "Corners",
+                                                                   "Top",
+                                                                   "Bottom",
+                                                                   "Left",
+                                                                   "Right"), 
+                                                       selected = "Best fit"),
+                                           numericInput("lvr_xmin", "X Min", 
                                                         value = NA,
                                                         min = -1.2, 
                                                         max = 1.2, 
@@ -174,9 +174,12 @@ body <- dashboardBody(
                                                         min = -10, 
                                                         max = 10, 
                                                         step = 0.05),
-                                          numericInput("lvr_point_padding", "Point padding",
-                                                       value = 0.25, min = 0, max = 2, step = 0.05)),
+                                           numericInput("lvr_point_padding", "Point padding",
+                                                        value = 0.25, min = 0, max = 2, step = 0.05)),
+                                    
                                     column(width = 6, 
+                                           numericInput("lvr_label_wrap", "Wrap label at chr.",
+                                                        value = 20, min = 0, max = Inf, step = 1),
                                            numericInput("lvr_xmax", "X Max", 
                                                         value = NA,
                                                         min = -1.2, 
@@ -189,7 +192,7 @@ body <- dashboardBody(
                                                         step = 0.05),
                                            numericInput("lvr_box_padding", "Box padding",
                                                         value = 0.25, min = 0, max = 2, step = 0.05))
-
+                                    
                            ), # end tab panel
 
                            # SUBTAB: Style
@@ -294,29 +297,34 @@ body <- dashboardBody(
                         solidHeader = TRUE,
                         plotOutput("perceptual_map")),
                     
-                    # lever map parameters
+                    # perceptual map parameters
                     tabBox(width = 3,
                            height = '700px',
 
                            # SUBTAB: Build
                            tabPanel("Build",
                                     column(width = 12, textInput("pm_plot_title", "Plot title")),
-                                    column(width = 12, selectInput("pm_label_position", "Label position",
-                                                                   multiple = FALSE,
-                                                                   choices = c("Best fit", 
-                                                                               "Corners",
-                                                                               "Top",
-                                                                               "Bottom",
-                                                                               "Left",
-                                                                               "Right"), 
-                                                                   selected = "Best fit")),
                                     column(width = 6, 
+                                           selectInput("pm_label_position", "Label position",
+                                                       multiple = FALSE,
+                                                       choices = c("Best fit", 
+                                                                   "Corners",
+                                                                   "Top",
+                                                                   "Bottom",
+                                                                   "Left",
+                                                                   "Right"), 
+                                                       selected = "Best fit"),
                                            numericInput("pm_point_padding", "Point padding",
                                                         value = 0.25, min = 0, max = 2, step = 0.05)),
+
                                     column(width = 6, 
+                                           numericInput("pm_label_wrap", "Wrap label at chr.",
+                                                        value = 20, min = 0, max = Inf, step = 1),
                                            numericInput("pm_box_padding", "Box padding",
-                                                        value = 0.25, min = 0, max = 2, step = 0.05))
-                                    
+                                                        value = 0.25, min = 0, max = 2, step = 0.05)),
+                                    br(),
+                                    tableOutput("pm_variance_table")
+
                            ), # end build tab
                            
                            # SUBTAB: Style
@@ -373,15 +381,9 @@ body <- dashboardBody(
                         width = 9,
                         collapsible = TRUE,
                         solidHeader = TRUE,
-                        dataTableOutput("pm_data_table"))#,
+                        dataTableOutput("pm_data_table")
+                        )
                     
-                    # box(title = "Variance explained",
-                    #     width = 3,
-                    #     collapsible = TRUE,
-                    #     collapsed = FALSE,
-                    #     solidHeader = TRUE,
-                    #     status = 'primary',
-                    #     dataTableOutput("variance_explained"))
                 ) # end row
                 
 

@@ -431,7 +431,7 @@ function(input, output, session) {
                                    drop = FALSE) 
             
             if (input$lvr_label_position == "Best fit") basemap <- basemap + 
-                geom_text_repel(aes(label = Attribute,
+                geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                     color = Sig),
                                 show.legend   = FALSE,
                                 size          = input$lvr_label_size,
@@ -441,7 +441,7 @@ function(input, output, session) {
                                 segment.color = input$lvr_segment_color)
             
             if (input$lvr_label_position == "Corners") basemap <- basemap + 
-                geom_text_repel(aes(label = Attribute,
+                geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                     color = Sig),
                                 show.legend   = FALSE,
                                 size          = input$lvr_label_size,
@@ -453,7 +453,7 @@ function(input, output, session) {
                                 nudge_y       = ifelse(leverdata[leverdata$Keep == 1, ]$Gap < 0, -0.01, 0.01))
             
             if (input$lvr_label_position == "Top") basemap <- basemap + 
-                geom_text_repel(aes(label = Attribute,
+                geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                     color = Sig),
                                 show.legend   = FALSE,
                                 size = input$lvr_label_size,
@@ -464,7 +464,7 @@ function(input, output, session) {
                                 nudge_y       = 0.01)
             
             if (input$lvr_label_position == "Bottom") basemap <- basemap + 
-                geom_text_repel(aes(label = Attribute,
+                geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                     color = Sig),
                                 show.legend   = FALSE,
                                 size = input$lvr_label_size,
@@ -475,7 +475,7 @@ function(input, output, session) {
                                 nudge_y       = -0.01)
             
             if (input$lvr_label_position == "Left") basemap <- basemap + 
-                geom_text_repel(aes(label = Attribute,
+                geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                     color = Sig),
                                 show.legend   = FALSE,
                                 size          = input$lvr_label_size,
@@ -486,7 +486,7 @@ function(input, output, session) {
                                 nudge_x       = -0.01)
             
             if (input$lvr_label_position == "Right") basemap <- basemap + 
-                geom_text_repel(aes(label = Attribute,
+                geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                     color = Sig),
                                 show.legend   = FALSE,
                                 size          = input$lvr_label_size,
@@ -591,7 +591,7 @@ function(input, output, session) {
                                drop = FALSE) 
         
         if (input$lvr_label_position == "Best fit") basemap <- basemap + 
-            geom_text_repel(aes(label = Attribute,
+            geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                 color = Sig),
                             show.legend   = FALSE,
                             size          = input$lvr_label_size * scale6,
@@ -601,7 +601,7 @@ function(input, output, session) {
                             segment.color = input$lvr_segment_color)
         
         if (input$lvr_label_position == "Corners") basemap <- basemap + 
-            geom_text_repel(aes(label = Attribute,
+            geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                 color = Sig),
                             show.legend   = FALSE,
                             size          = input$lvr_label_size * scale6,
@@ -613,7 +613,7 @@ function(input, output, session) {
                             nudge_y       = ifelse(leverdata[leverdata$Keep == 1, ]$Gap < 0, -0.01, 0.01))
         
         if (input$lvr_label_position == "Top") basemap <- basemap + 
-            geom_text_repel(aes(label = Attribute,
+            geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                 color = Sig),
                             show.legend   = FALSE,
                             size          = input$lvr_label_size * scale6,
@@ -624,7 +624,7 @@ function(input, output, session) {
                             nudge_y       = 0.01)
         
         if (input$lvr_label_position == "Bottom") basemap <- basemap + 
-            geom_text_repel(aes(label = Attribute,
+            geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                 color = Sig),
                             show.legend   = FALSE,
                             size          = input$lvr_label_size * scale6,
@@ -635,7 +635,7 @@ function(input, output, session) {
                             nudge_y       = -0.01)
         
         if (input$lvr_label_position == "Left") basemap <- basemap + 
-            geom_text_repel(aes(label = Attribute,
+            geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                 color = Sig),
                             show.legend   = FALSE,
                             size          = input$lvr_label_size * scale6,
@@ -646,7 +646,7 @@ function(input, output, session) {
                             nudge_x       = -0.01)
         
         if (input$lvr_label_position == "Right") basemap <- basemap + 
-            geom_text_repel(aes(label = Attribute,
+            geom_text_repel(aes(label = str_wrap(Attribute, input$lvr_label_wrap),
                                 color = Sig),
                             show.legend   = FALSE,
                             size          = input$lvr_label_size * scale6,
@@ -866,7 +866,7 @@ function(input, output, session) {
         print(out)
     })
     
-    ### calculate correspondence analysis
+    ### calculate correspondence analysis (coordinates)
     perceptualdata <- eventReactive(input$pm_submit == 0, {
         
         if (is.null(input$lever_percep_corr_file)) return(NULL)
@@ -930,6 +930,51 @@ function(input, output, session) {
         
     }, ignoreNULL = TRUE, ignoreInit = TRUE)
     
+    ### calculate correspondence analysis (variance explained)
+    perceptual_variance <- eventReactive(input$pm_submit == 0, {
+        
+        if (is.null(input$lever_percep_corr_file)) return(NULL)
+        
+        data <- lever_percep_corr()
+        
+        if (input$pm_filter1 == "Total") {
+            
+            out <- data
+            
+        } else { out <- data %>% filter(data[8] == input$pm_filter1) }
+        
+        if (input$pm_filter2 == "Total") {
+            
+            out <- out
+            
+        } else { out <- out %>% filter(data[9] == input$pm_filter2) }
+        
+        if (input$pm_filter3 == "Total") {
+            
+            out <- out
+            
+        } else { out <- out %>% filter(data[10] == input$pm_filter3) }
+
+        ca.input <- out %>%
+            filter(Attribute %in% input$pm_attributes) %>%
+            select(Weight, Banner, Attribute, Rating) %>%
+            group_by(Banner, Attribute) %>%
+            summarise(Avg = weighted.mean(Rating, Weight)) %>%
+            spread(Banner, Avg) %>%
+            as.data.frame() %>%
+            remove_rownames() %>%
+            column_to_rownames("Attribute")
+        
+        ca.output <- FactoMineR::CA(X = ca.input, graph = FALSE)
+        
+        variance <- tibble(Dimension = 1:4,
+                           Pct_Variance = ca.output$eig$`percentage of variance`,
+                           Cumulative = ca.output$eig$`cumulative percentage of variance`) 
+        
+        variance 
+        
+    }, ignoreNULL = TRUE, ignoreInit = TRUE)
+    
     ### generate reactive perceptual map table
     output$pm_data_table <- renderDataTable({
         
@@ -954,6 +999,30 @@ function(input, output, session) {
             formatRound(c(2:3), digits = 3)
 
         
+    })
+    
+    output$pm_variance_table <- renderTable(align = 'c', {
+        
+        final <- perceptual_variance() %>%
+            mutate_at(.cols = vars(Pct_Variance, Cumulative), 
+                      .funs = funs(round(., 2))) %>%
+            mutate_at(.cols = vars(Pct_Variance, Cumulative), 
+                      .funs = funs(paste(., "%", sep = ""))) %>%
+            head(2) %>%
+            set_names(c("Dimension", "Variance Explained", "Cumulative Variance"))
+        
+        final
+        
+        # datatable(final,
+        #           rownames = FALSE,
+        #           options = list(
+        #               ordering = FALSE,
+        #               dom = 't',
+        #               bPaginate = FALSE,
+        #               columnDefs = list(
+        #                   list(className = "dt-center",
+        #                        targets = "_all"))))
+        #     
     })
     
     ### generate reactive perceptual map plot TO PRINT
@@ -999,7 +1068,7 @@ function(input, output, session) {
 
         
         if (input$pm_label_position == "Best fit") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size,
@@ -1009,7 +1078,7 @@ function(input, output, session) {
                             segment.color = input$pm_segment_color)
         
         if (input$pm_label_position == "Corners") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size,
@@ -1021,7 +1090,7 @@ function(input, output, session) {
                             nudge_y       = ifelse(perceptual_data$Dim2 < 0, -0.001, 0.001))
         
         if (input$pm_label_position == "Top") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size,
@@ -1032,7 +1101,7 @@ function(input, output, session) {
                             nudge_y       = 0.001)
         
         if (input$pm_label_position == "Bottom") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size,
@@ -1043,7 +1112,7 @@ function(input, output, session) {
                             nudge_y       = -0.001)
         
         if (input$pm_label_position == "Left") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size,
@@ -1054,7 +1123,7 @@ function(input, output, session) {
                             nudge_x       = -0.001)
         
         if (input$pm_label_position == "Right") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size,
@@ -1128,7 +1197,7 @@ function(input, output, session) {
 
         
         if (input$pm_label_position == "Best fit") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size * scale6,
@@ -1138,7 +1207,7 @@ function(input, output, session) {
                             segment.color = input$pm_segment_color)
         
         if (input$pm_label_position == "Corners") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size * scale6,
@@ -1150,7 +1219,7 @@ function(input, output, session) {
                             nudge_y       = ifelse(perceptual_data$Dim2 < 0, -0.001, 0.001))
         
         if (input$pm_label_position == "Top") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size * scale6,
@@ -1161,7 +1230,7 @@ function(input, output, session) {
                             nudge_y       = 0.001)
         
         if (input$pm_label_position == "Bottom") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size * scale6,
@@ -1172,7 +1241,7 @@ function(input, output, session) {
                             nudge_y       = -0.001)
         
         if (input$pm_label_position == "Left") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size * scale6,
@@ -1183,7 +1252,7 @@ function(input, output, session) {
                             nudge_x       = -0.001)
         
         if (input$pm_label_position == "Right") basemap <- basemap + 
-            geom_text_repel(aes(label = Variable,
+            geom_text_repel(aes(label = str_wrap(Variable, input$pm_label_wrap),
                                 color = Type),
                             show.legend   = FALSE,
                             size          = input$pm_label_size * scale6,

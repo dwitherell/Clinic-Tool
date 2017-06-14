@@ -36,6 +36,7 @@ library(RColorBrewer)       # color palettes
 library(DT)                 # customizing data tables
 library(scales)             # percents and stuff
 library(FactoMineR)         # for correspondence analysis
+library(stringr)            # label wrapping
 
 #### global objects ----
 bar_width <- 250
