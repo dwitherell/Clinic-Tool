@@ -50,7 +50,7 @@ function(input, output, session) {
         
         means <- lever_percep_corr() %>%
             group_by(Banner, Attribute) %>%
-            summarise(Mean = mean(Weight * Rating)) %>%
+            summarise(Mean = weighted.mean(Rating, Weight)) %>%
             mutate_if(is.numeric, funs(round(., 3))) %>%
             spread(Banner, Mean)
         
@@ -279,20 +279,30 @@ function(input, output, session) {
             
         } else { out <- out %>% filter(out[9] == input$lvr_filter2) }
         
-
-        out <- out %>% select(1:7)
+        # filter 3
+        if (input$lvr_filter3 == "Total" | is.null(input$lvr_filter3)) {
+            
+            out <- out
+            
+        } else { out <- out %>% filter(out[10] == input$lvr_filter3) }
         
-        ## sample size calculation
-        comps <- length(unique(out$Banner)) - 1
+        # pull out type and attribute variables for join at the end
+        type <- out %>% 
+            select(Attribute, Type) %>%
+            group_by(Attribute) %>%
+            filter(row_number() == 1)
+        
+        # extracting elements for sample size calc
+        N_Competitors <- length(unique(out$Banner)) - 1
         
         Tgt_SS <- out %>%
             group_by(Serial) %>%
             filter(row_number() == 1) %>%
             nrow(.)
         
-        Comp_SS <- Tgt_SS * comps
+        Comp_SS <- Tgt_SS * N_Competitors
         
-        ## means calculation
+        # calc means
         means <- out %>%
             mutate(Group = ifelse(Banner == input$lvr_banner,
                                   "Tgt_Mean", "Comp_Mean")) %>%
@@ -301,7 +311,7 @@ function(input, output, session) {
             spread(Group, avg) %>%
             mutate(Gap = Tgt_Mean - Comp_Mean)
         
-        ## stdev calculation
+        # calc standard deviation
         stdev <- out %>%
             mutate(Group = ifelse(Banner == input$lvr_banner, 
                                   "Tgt_Std", "Comp_Std")) %>%
@@ -309,40 +319,56 @@ function(input, output, session) {
             summarise(std = sqrt(wtd.var(x = Rating, weights = Weight))) %>%
             spread(Group, std)
         
-        ## correlation calculation
+        # calc correlations
         corr <- out %>%
-            select(-Attribute_Code) %>%
+            select(-Attribute_Code, -Type) %>%
             spread(Attribute, Rating) %>%
-            select(-Serial, -c(Banner_Code:Banner)) %$%
+            select(-1, -c(3:7)) %$%
             wtd.cors(., weight = Weight) %>%
             as.data.frame() %>%
             rownames_to_column("Attribute") %>%
             gather(Corr_var, Correlation, -Attribute) %>%
-            filter(Corr_var == input$lvr_corr) %>%
+            filter(Corr_var ==  input$lvr_corr) %>%
             select(Attribute, Correlation)
         
-        ## combine all
-        final <- means %>%
+        # join together
+        joined <- means %>%
             mutate(Comp_SS = Comp_SS,
                    Tgt_SS  = Tgt_SS) %>%
             left_join(stdev, by = "Attribute") %>%
             left_join(corr, by = "Attribute") %>%
+            left_join(type, by = "Attribute")
+        
+        # sig tests
+        scale  <- joined %>% filter(Type == "Scale") %>%
             mutate(
                 Tgt_Std2  = Tgt_Std ^ 2,
                 Comp_Std2 = Comp_Std ^ 2,
                 Pool_Std  = (((Tgt_SS - 1) * Tgt_Std2) + ((Comp_SS - 1) * Comp_Std2)) / (Tgt_SS + Comp_SS - 2),
                 Tstat     = Gap / sqrt(Pool_Std * ((1 / Tgt_SS) + (1 / Comp_SS))),
-                Sig       = as.factor(ifelse(Gap > 0 & abs(Tstat) > abs(qnorm(0.1)), "Sig higher", 
-                                   ifelse(Gap < 0 & abs(Tstat) > abs(qnorm(0.1)), "Sig lower", "Not sig")))
+                Sig       = as.factor(ifelse(Gap > 0 & abs(Tstat) > abs(qnorm(0.1 / 2)), "Sig higher", 
+                                             ifelse(Gap < 0 & abs(Tstat) > abs(qnorm(0.1 / 2)), "Sig lower", "Not sig")))
             ) %>%
-            select(Attribute, Correlation, Gap, Tgt_Mean, Comp_Mean, Tgt_SS, Comp_SS, Tgt_Std, Comp_Std, Sig) %>%
-            set_names(c("Attribute", "Correlation", "Gap", 
-                        "Tgt. Mean", "Comp. Mean", 
-                        "Tgt. N", "Comp. N",
-                        "Tgt. Std", "Comp. Std",
-                        "Sig"))
+            select(Attribute, Correlation, Gap, Tgt_Mean, Comp_Mean, 
+                   Tgt_SS, Comp_SS, Tgt_Std, Comp_Std, Sig)
         
-        final
+        binary <- joined %>% filter(Type == "Binary") %>%
+            mutate(
+                pool  = ((Tgt_Mean * Tgt_SS) + (Comp_Mean * Comp_SS)) / (Tgt_SS + Comp_SS),
+                SE    = sqrt(pool * (1 - pool) * ((1 / Tgt_SS) + (1 / Comp_SS))),
+                zstat = (Tgt_Mean - Comp_Mean) / SE,
+                Sig   = as.factor(ifelse(Gap > 0 & abs(zstat) > abs(qnorm(0.1 / 2)), "Sig higher", 
+                                         ifelse(Gap < 0 & abs(zstat) > abs(qnorm(0.1 / 2)), "Sig lower", "Not sig")))
+            ) %>%
+            select(Attribute, Correlation, Gap, Tgt_Mean, Comp_Mean, 
+                   Tgt_SS, Comp_SS, Tgt_Std, Comp_Std, Sig)
+        
+        out <- bind_rows(scale, binary) %>%
+            arrange(desc(Correlation)) %>%
+            mutate(Sig = as.factor(Sig)) %>%
+            filter(Attribute %in% input$lvr_attributes) %>%
+            set_names(gsub("_", ". ", names(.)))
+        
         
     }, ignoreNULL = FALSE)
     
@@ -1308,8 +1334,4 @@ function(input, output, session) {
     
     
 }
-
-
-
-
 

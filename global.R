@@ -79,6 +79,72 @@ tweaks <- list(
 # 108, 174, 224
 # #6CAEE0
 
-
+calc_lever_data <- function(data) {
+    
+    # sample size calculations
+    N_Competitors <- length(unique(data$Banner)) - 1
+    
+    Tgt_SS <- data %>%
+        group_by(Serial) %>%
+        filter(row_number() == 1) %>%
+        nrow(.)
+    
+    Comp_SS <- Tgt_SS * N_Competitors
+    
+    # means
+    means <- data %>%
+        mutate(Group = ifelse(Banner == input$lvr_banner,
+                              "Tgt_Mean", "Comp_Mean")) %>%
+        group_by(Group, Attribute) %>%
+        summarise(avg = mean(Weight * Rating)) %>%
+        spread(Group, avg) %>%
+        mutate(Gap = Tgt_Mean - Comp_Mean)
+    
+    # standard deviation
+    stdev <- data %>%
+        mutate(Group = ifelse(Banner == input$lvr_banner, 
+                              "Tgt_Std", "Comp_Std")) %>%
+        group_by(Group, Attribute) %>%
+        summarise(std = sqrt(wtd.var(x = Rating, weights = Weight))) %>%
+        spread(Group, std)
+    
+    # correlations
+    corr <- data %>%
+        select(-Attribute_Code) %>%
+        spread(Attribute, Rating) %>%
+        select(-Serial, -c(Banner_Code:Banner)) %$%
+        wtd.cors(., weight = Weight) %>%
+        as.data.frame() %>%
+        rownames_to_column("Attribute") %>%
+        gather(Corr_var, Correlation, -Attribute) %>%
+        filter(Corr_var ==  "Cargo Suitability") %>%
+        select(Attribute, Correlation)
+    
+    # combine together
+    final <- means %>%
+        mutate(Comp_SS = Comp_SS,
+               Tgt_SS  = Tgt_SS) %>%
+        left_join(stdev, by = "Attribute") %>%
+        left_join(corr, by = "Attribute") %>%
+        mutate(
+            Tgt_Std2  = Tgt_Std ^ 2,
+            Comp_Std2 = Comp_Std ^ 2,
+            Pool_Std  = (((Tgt_SS - 1) * Tgt_Std2) + ((Comp_SS - 1) * Comp_Std2)) / (Tgt_SS + Comp_SS - 2),
+            Tstat     = Gap / sqrt(Pool_Std * ((1 / Tgt_SS) + (1 / Comp_SS))),
+            Sig       = as.factor(ifelse(Gap > 0 & abs(Tstat) > abs(qnorm(0.1)), "Sig higher", 
+                                         ifelse(Gap < 0 & abs(Tstat) > abs(qnorm(0.1)), "Sig lower", "Not sig")))
+        ) %>%
+        select(Attribute, Correlation, Gap, Tgt_Mean, Comp_Mean, 
+               Tgt_SS, Comp_SS, Tgt_Std, Comp_Std, Sig) %>%
+        set_names(c("Attribute", "Correlation", "Gap", 
+                    "Tgt. Mean", "Comp. Mean", 
+                    "Tgt. N", "Comp. N",
+                    "Tgt. Std", "Comp. Std",
+                    "Sig"))
+    
+    
+    final
+    
+}
 
 

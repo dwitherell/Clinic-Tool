@@ -204,10 +204,10 @@ stacked <- fixfactors %>%
 # This is a good time to check and see if the lookup tables
 # will match your data for the succeeding table join
 unique(stacked$Attribute_Code) %>% as.data.frame()
-unique(stacked$Banner_Code)
+unique(stacked$Banner_Code) %>% as.data.frame()
 
 #### 6) ADD IN LABELS, REORDER, SORT ----
-clean <- stacked %>%
+labeled <- stacked %>%
     
     # add vehicle and qid labels
     left_join(attribute, by = "Attribute_Code") %>%
@@ -221,5 +221,10 @@ clean <- stacked %>%
     # sort
     arrange(Serial, Banner_Code, Attribute_Code)
 
+#### 7) ADD IN VARIABLE TYPE (SCALE VS BINARY)
+final <- labeled %>%
+    mutate(Type = "Scale")
+
+
 #### 7) SAVE FILE ----
-saveRDS(object = clean, file = "./data/maps_corrs.rds")
+saveRDS(object = final, file = "./data/maps_corrs.rds")

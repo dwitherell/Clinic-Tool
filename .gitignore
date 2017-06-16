@@ -1,3 +1,8 @@
 *.sav
+*.sas
 .Rproj.user
 data
+q42016_mkt1.csv
+attribute-beat.csv
+banner-beat.csv
+preprocess-beat.r

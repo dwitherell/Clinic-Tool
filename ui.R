@@ -16,31 +16,31 @@ header <- dashboardHeader(
 
 #### sidebar ----
 sidebar <- dashboardSidebar(
-    
+        
     ### sidebar styling
     width = bar_width,
 
     ### sidebar menu
     sidebarMenu(
         
-                ## instructions tab
-                menuItem('Instructions', tabName = 'INSTRUCTIONS_TAB', icon = icon('home')),
-
-                ## load data tab
-                menuItem('Load/Preview Data', tabName = 'LOAD_DATA_TAB', icon = icon('upload')),
-                
-                ## lever map tab
-                menuItem('Lever Map', tabName = "LEVER_TAB", icon = icon('map-o')),
-                
-                ## perceptual map tab
-                menuItem('Perceptual Map', tabName = 'PERCEPTUAL_TAB', icon = icon('map')),
-                
-                ## correlation tab
-                menuItem('Correlations', tabName = 'CORRELATIONS_TAB', icon = icon('random')),
-                
-                ## about analyses tab
-                menuItem("About", tabName = "ABOUT_TAB", icon = icon('question-circle'))
-                
+        ## instructions tab
+        menuItem('Instructions', tabName = 'INSTRUCTIONS_TAB', icon = icon('home')),
+        
+        ## load data tab
+        menuItem('Load/Preview Data', tabName = 'LOAD_DATA_TAB', icon = icon('upload')),
+        
+        ## lever map tab
+        menuItem('Lever Map', tabName = "LEVER_TAB", icon = icon('map-o')),
+        
+        ## perceptual map tab
+        menuItem('Perceptual Map', tabName = 'PERCEPTUAL_TAB', icon = icon('map')),
+        
+        ## correlation tab
+        menuItem('Correlations', tabName = 'CORRELATIONS_TAB', icon = icon('random')),
+        
+        ## about analyses tab
+        menuItem("About", tabName = "ABOUT_TAB", icon = icon('question-circle'))
+        
     ) # end sidebar menu
     
 ) # end sidebar
