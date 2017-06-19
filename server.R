@@ -307,7 +307,7 @@ function(input, output, session) {
             mutate(Group = ifelse(Banner == input$lvr_banner,
                                   "Tgt_Mean", "Comp_Mean")) %>%
             group_by(Group, Attribute) %>%
-            summarise(avg = mean(Weight * Rating)) %>%
+            summarise(avg = weighted.mean(Rating, Weight)) %>%
             spread(Group, avg) %>%
             mutate(Gap = Tgt_Mean - Comp_Mean)
         
